@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.leaf4.app.dao.AdminDao">
+
+	
+	<!-- 회원 start -->
+	<select id="getMember" parameterType="int" resultType="com.leaf4.app.vo.MemberVO">
+	SELECT * FROM member2 WHERE mem_no = #{memNo}
+	</select>
+	
+	
+	<insert id="insertMember" parameterType="com.leaf4.app.vo.MemberVO" >
+	INSERT INTO member2 SET mem_id         = #{memId}, 
+							mem_pass       = #{memPass}, 
+							mem_name       = #{memName},
+							mem_zip        = #{memZip}, 
+							mem_add1       = #{memAdd1}, 
+							mem_add2       = #{memAdd2}, 
+							mem_hp         = #{memHp}, 
+							mem_mail       = #{memMail},
+							mem_mileage    = 0,
+							mem_del_yn     = 'N',
+							agree     	   = #{Agree},
+							reg_date       = date_format(now(), '%Y-%m-%d')   
+	</insert>
+
+
+	<update id="updateMember" parameterType="com.leaf4.app.vo.MemberVO" >
+	UPDATE member2 SET 		mem_id         = #{memId}, 
+							mem_pass       = #{memPass}, 
+							mem_name       = #{memName},
+							mem_zip        = #{memZip}, 
+							mem_add1       = #{memAdd1}, 
+							mem_add2       = #{memAdd2}, 
+							mem_hp         = #{memHp}, 
+							mem_mail       = #{memMail},
+							mem_mileage    = 0,
+							mem_del_yn     = 'N',
+							agree     	   = #{Agree},
+							up_datetime    = date_format(now(), '%Y-%m-%d')  
+				   WHERE   mem_no = #{memNo}			 
+	</update>
+	
+	<delete id="deleteMember" parameterType="com.leaf4.app.vo.MemberVO" >
+	DELETE FROM member2 WHERE mem_no = #{memNo}			 
+	</delete>
+	
+	<delete id="selectMemDelete" parameterType="String" >
+	DELETE FROM member2 WHERE mem_no = #{memNo}			 
+	</delete>
+	
+	<select id="getMemTotalCount" parameterType="com.leaf4.app.vo.PagingVO" resultType="int">
+		SELECT count(*)
+		FROM member2
+		WHERE mem_del_yn = 'N' 
+		
+		<if test="searchName!=null">
+		and mem_id LIKE concat('%',#{searchName},'%')
+		</if>
+	</select>
+
+
+	<select id="getMemList" parameterType="com.leaf4.app.vo.PagingVO" resultType="com.leaf4.app.vo.MemberVO" >
+		SELECT * FROM member2
+		WHERE mem_del_yn = 'N'
+		<if test="searchName!=null">
+		and mem_id LIKE concat('%',#{searchName},'%')
+		</if>
+		ORDER BY mem_no desc LIMIT #{firstRow},#{rowSizePerPage}
+	</select>	
+	<!-- 회원 end -->
+	
+	<!-- 상품 start -->
+
+	<select id="getItem" parameterType="int" resultType="com.leaf4.app.vo.ItemVO">
+	SELECT * FROM item_list WHERE item_no = #{itemNo}
+	</select>
+	
+	
+	<insert id="insertItem" parameterType="com.leaf4.app.vo.ItemVO" >
+	INSERT INTO item_list SET item_name      = #{itemName}, 
+							  item_cate       = #{itemCate}, 
+							  item_price       = #{itemPrice},
+							  item_del        = 'N', 
+							  wr_datetime       = date_format(now(), '%Y-%m-%d')   
+	</insert>
+
+
+	<update id="updateItem" parameterType="com.leaf4.app.vo.ItemVO" >
+	UPDATE item_list SET 		item_name        = #{itemName}, 
+							item_cate        = #{itemCate}, 
+							item_price       = #{itemPrice},
+							item_del         = 'N', 
+							up_datetime      = date_format(now(), '%Y-%m-%d') 
+				   WHERE    item_no = #{itemNo}			 
+	</update>
+	
+	<delete id="deleteItem" parameterType="com.leaf4.app.vo.ItemVO" >
+	DELETE FROM item_list WHERE item_no = #{itemNo}			 
+	</delete>
+	
+	<delete id="selectItemDelete" parameterType="String" >
+	DELETE FROM item_list WHERE item_no = #{itemNo}			 
+	</delete>
+	
+	<select id="getItemTotalCount" parameterType="com.leaf4.app.vo.PagingVO" resultType="int">
+		SELECT count(*)
+		FROM item_list
+		WHERE item_del = 'N' 
+		
+		<if test="searchName!=null">
+		and item_name LIKE concat('%',#{searchName},'%')
+		</if>
+	</select>
+
+
+	<select id="getItemList" parameterType="com.leaf4.app.vo.PagingVO" resultType="com.leaf4.app.vo.ItemVO" >
+		SELECT * FROM item_list
+		WHERE item_del = 'N'
+		<if test="searchName!=null">
+		and item_name LIKE concat('%',#{searchName},'%')
+		</if>
+		ORDER BY item_no desc LIMIT #{firstRow},#{rowSizePerPage}
+	</select>	
+
+	
+	<!-- 상품 end -->
+
+</mapper>

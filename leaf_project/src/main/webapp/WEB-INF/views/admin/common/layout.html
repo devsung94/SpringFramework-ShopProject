@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta name="description" content="" />
+<meta name="author" content="" />
+<title>Colver Admin</title>
+
+<link th:href="@{/resources/static/css/admin_styles.css}" rel="stylesheet" />
+<script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js"	crossorigin="anonymous"></script>
+	
+<script th:src="@{/resources/static/js/jquery-3.7.1.min.js}" ></script>
+<script th:src="@{/resources/static/js/common.js}" ></script>
+
+<!-- SweetAlert2 -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.2.0/sweetalert2.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.2.0/sweetalert2.all.min.js"></script>
+
+</head>
+
+<body class="sb-nav-fixed">
+	<div id="layoutSidenav">
+		<!-- body 태그 내부의 header 를 담당하는 부분이다. -->
+		<nav th:replace="admin/common/nav :: admin_nav"></nav>
+
+		<div id="layoutSidenav_nav">
+			<!-- body 태그 내부의 header 를 담당하는 부분이다. -->
+			<header th:replace="admin/common/header :: admin_header"></header>
+		</div>
+		<div id="layoutSidenav_content">
+			<!-- 아래 div가 컨트롤러에 의해 교체되는 content 영역이다. -->
+			<section class="pt-4 m-4" layout:fragment="admin_content"></section>
+
+			<!-- body 태그 내부의 footer 를 담당하는 부분이다. -->
+			<footer th:replace="admin/common/footer :: admin_footer"></footer>
+		</div>
+	</div>
+
+	<script	src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"	crossorigin="anonymous"></script>
+	<script th:src="@{/resources/static/js/admin.js}"></script>
+</body>
+</html>

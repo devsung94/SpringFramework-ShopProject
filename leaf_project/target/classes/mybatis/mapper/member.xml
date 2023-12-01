@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.leaf4.app.dao.LoginDao">
+	<select id="getMember" parameterType="String" resultType="com.leaf4.app.vo.MemberVO">
+	SELECT * FROM member2 WHERE mem_id=#{memId}
+	</select>
+	
+	<insert id="insertMember" parameterType="com.leaf4.app.vo.MemberVO" >
+	INSERT INTO member2 SET mem_id         = #{memId}, 
+							mem_pass       = #{memPass}, 
+							mem_name       = #{memName},
+							mem_zip        = #{memZip}, 
+							mem_add1       = #{memAdd1}, 
+							mem_add2       = #{memAdd2}, 
+							mem_hp         = #{memHp}, 
+							mem_mail       = #{memMail},
+							mem_mileage    = 0,
+							mem_del_yn     = 'N',
+							agree     	   = #{Agree},
+							reg_date       = date_format(now(), '%Y-%m-%d') 
+	</insert>
+
+</mapper>
