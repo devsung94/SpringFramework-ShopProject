@@ -1,5 +1,4 @@
-# SpringFramework 토이 프로젝트
-쇼핑몰 프로젝트
+# SpringFramework 쇼핑몰 프로젝트
 <br><br>
 # Version
 JDK    : 1.8<br>
