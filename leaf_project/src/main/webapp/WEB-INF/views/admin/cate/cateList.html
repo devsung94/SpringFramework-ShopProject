@@ -1,19 +1,183 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-    data-layout-decorate="~{admin/common/layout}"  >
-    
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	data-layout-decorate="~{admin/common/layout}">
 
-	<section layout:fragment="admin_content">
-        <div class="container-fluid px-4">
-            <h1 class="mt-4">카테고리 관리</h1>
-            <ol class="breadcrumb mb-4">
-                <li class="breadcrumb-item active">카테고리 관리하는 페이지 입니다.</li>
-            </ol>
-            <div class="row">
-            
-            </div>
-        </div>    
-    </section>           
-    
-</html>     
+
+<section layout:fragment="admin_content">
+	<div class="container-fluid px-4">
+		<h1 class="mt-4">카테고리관리</h1>
+		<ol class="breadcrumb mb-4">
+			<li class="breadcrumb-item active">카테고리관리 페이지 입니다.</li>
+		</ol>
+		<div class="row">
+			<div class="card shadow mb-4">
+				<div class="card-header py-3">
+					<h6 class="m-0 font-weight-bold " >총 카테고리 <b class="text-primary" >[[${paging.totalRowCount}]]</b>개</h6>
+				</div>
+				<div class="card-body">
+					<div class="table-responsive">
+						<div id="dataTable_wrapper"
+							class="dataTables_wrapper dt-bootstrap4">
+							<div class="row">
+								<div class="mb-3 col-sm-12 col-md-6">
+									<div id="dataTable_filter" class="dataTables_filter">
+										<form action="cateList.do" method="get">
+											<input type="hidden" name="searchType" value="cate_name" />
+											<input type="text" name="searchName" class="form-control " placeholder="카테고리명 검색" th:value="${paging.searchName}" aria-controls="dataTable">
+										</form>
+									</div>
+								</div>
+								<div class="mb-3 col-sm-12 col-md-6">
+									<div id="dataTable_filter" class="dataTables_filter text-end">
+										<button type="button"  class="btn btn-primary" th:onclick="|location.href='@{/admin/cateAdd.do}'|" >카테고리등록</button>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-12">
+									<table class="table table-bordered dataTable" id="dataTable"
+										width="100%" cellspacing="0" role="grid"
+										aria-describedby="dataTable_info" style="width: 100%;">
+										<thead>
+											<tr role="row">
+												<th class="text-center" style="width: 20px;">
+													<input type="checkbox" name="chkall" onclick="allchk(this);" value="y" />
+												</th>
+												<th class="sorting" style="width: 50px;">카테고리명</th>
+												<th class="sorting" style="width: 100px;">순서</th>
+												<th class="sorting" style="width: 100px;">등록일</th>
+												<th class="sorting" style="width: 100px;">관리</th>
+											</tr>
+										</thead>
+										<tbody>
+											<th:block th:if="${paging.totalRowCount > 0}" >
+												<tr class="odd" th:each="cate:${cateList}"  >
+													<td class="text-center"><input type="checkbox" name="chk" th:value="${cate.cateNo}" /></td>
+													<td>[[${cate.cateName}]]</td>
+													<td>[[${cate.cateOrder}]]</td>
+													<td>[[${cate.wrDatetime}]]</td>
+													<td>
+														<button type="button" class="btn btn-success" th:onclick="|location.href='@{/admin/cateEdit.do(cateNo=${cate.cateNo})}'|" >수정</button>
+														<button type="button" class="btn btn-danger"  th:onclick="memDelete('[[${cate.cateNo}]]');" >삭제</button>
+													</td>
+												</tr>
+											</th:block>
+											
+											<th:block th:unless="${paging.totalRowCount > 0}" >
+												<tr class="odd"><td colspan="8" class="text-center">등록된 카테고리가 없습니다.</td></tr>
+											</th:block>
+										</tbody>
+									</table>
+								</div>
+							</div>
+							
+							<div class="row">
+								<div class="mb-3">
+									<div id="dataTable_filter" class="dataTables_filter text-end">
+										<button type="button"  class="btn btn-danger" th:onclick="selectAction('Delete')" >선택삭제</button>
+									</div>
+								</div>
+							</div>
+							
+							<div class="row text-center">
+								<div >
+									<nav id="pagination" aria-label="Page navigation">
+							            <ul class="pagination justify-content-center">
+							                <li th:unless="${paging.curPage eq 1}" class="page-item" >
+							                	<a class="page-link" th:href="@{cateList.do(curPage=1)}">&laquo;</a>
+							               	</li>
+							                <li th:class="${paging.curPage eq 1}? 'page-item disabled':'page-item' " >
+							                	<a th:if="${paging.curPage eq 1}" class="page-link" href="javascript:void(0)">&lt;</a>
+							                	<a th:unless="${paging.curPage eq 1}" class="page-link" th:href="@{cateList.do(curPage=${paging.curPage-1})}">&lt;</a>
+							               	</li>
+							                
+							                <th:block th:with="start=${paging.firstPage}, end=${paging.lastPage}">
+							                <li th:class="${paging.curPage eq pageButton} ? 'page-item active' : 'page-item' "  th:with="start = ${paging.firstPage}, end = ${paging.lastPage}"
+								    			th:each="pageButton : ${#numbers.sequence(start, end)}"  >
+							                	<a class="page-link" th:href="@{cateList.do(curPage=${pageButton})}" th:text="${pageButton}"></a>
+							                </li>
+							                </th:block>
+							                
+							                <li th:class="${paging.curPage eq paging.lastPage}? 'page-item disabled':'page-item' ">
+							                	<a th:if="${paging.curPage eq paging.lastPage}" class="page-link" href="javascript:void(0)">&gt;</a>
+							                	<a th:unless="${paging.curPage eq paging.lastPage}" class="page-link" th:href="@{cateList.do(curPage=${paging.curPage+1})}">&gt;</a>
+							               	</li>
+							                <li th:unless="${paging.curPage eq paging.lastPage}" class="page-item" >
+							                	<a class="page-link" th:href="@{cateList.do(curPage=${paging.totalPageCount})}">&raquo;</a>
+							               	</li>
+							            </ul>
+							        </nav>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<script>
+	function allchk(chk){
+		console.log($(chk).checked);
+		
+		if($(chk).is(":checked")){
+			$("input[name^=chk]").prop("checked",true);
+		}else{
+			$("input[name^=chk]").prop("checked",false);
+		}
+		
+	}
+	
+	function memDelete(cateNo){
+		if(confirm("정말 삭제하시겠습니까?")){
+			
+			let data = JSON.stringify({"cateNo":cateNo})
+			let result = HttpJson("post","/admin/cateDelete.do",data);
+			
+			if(result){
+				alert("삭제가 완료되었습니다.");
+				location.reload();
+			}else{
+				alert("쿼리실행 오류");
+			}
+		}
+	}
+	
+	function selectAction(type){
+		let msg = type=="Edit" ? "수정" : "삭제",
+			result,data;
+		if(confirm("정말 "+msg+"하시겠습니까?")){
+			let list = $("input[name=chk]:checked");
+			let Arr = [];
+			
+			if(list.length==0){
+				alert("선택된 항목이 없습니다.");
+				return;
+			}
+			
+			for(i=0;i<list.length;i++){
+				Arr.push(list[i].value);
+			}
+			
+			console.log(Arr);
+			
+			result = HttpAjax("post","/admin/selectCateAction.do",{Arr:Arr});
+			if(result){
+				alert("선택"+msg+" 완료되었습니다.");
+				location.reload();
+			}else{
+				alert("쿼리 오류");
+			}	
+		}
+	}
+	
+	
+	
+	</script>
+	
+</section>
+
+
+
+</html>

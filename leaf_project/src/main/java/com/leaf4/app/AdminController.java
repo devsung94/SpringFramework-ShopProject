@@ -14,9 +14,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.leaf4.app.dao.AdminDao;
+import com.leaf4.app.vo.CateVO;
 import com.leaf4.app.vo.ItemVO;
 import com.leaf4.app.vo.MemberVO;
+import com.leaf4.app.vo.OrderVO;
 import com.leaf4.app.vo.PagingVO;
+import com.leaf4.app.vo.QnaVO;
 
 @Controller
 @RequestMapping("/admin")
@@ -185,22 +188,246 @@ public class AdminController {
 		
 		return result;
 	}
+	//------------------ 상품관리 end --------------------//
 	
-	//------------------ 상품관리 --------------------//
-	
+	//------------------ 주문관리 start --------------------//
+
 	@GetMapping("orderList.do")
-	public String orderList() {
+	public String orderList(Model model, @ModelAttribute("paging")PagingVO paging) {
+		
+		int totalRowCount=adminDao.getOrderTotalCount(paging);
+		paging.setTotalRowCount(totalRowCount);
+		paging.pageSetting();
+		
+		List<OrderVO> orderList=adminDao.getOrderList(paging);
+		model.addAttribute("orderList",orderList);		
+
 		return "admin/order/orderList";
 	}
+
+	
+	@RequestMapping("orderAdd.do")
+	public String getOrderAdd(Model model) {
+		return "admin/order/orderAdd";
+	}
+	
+	@RequestMapping("orderCreate.do")
+	public String orderCreate(Model model, OrderVO orderVO) throws Exception {
+		System.out.println(orderVO.toString());
+		adminDao.insertOrder(orderVO);
+		
+		model.addAttribute("url","/admin/orderList.do");
+		model.addAttribute("msg","상품등록이 완료되었습니다.");
+		return "admin/message";
+	}
+	
+
+
+	@RequestMapping("orderEdit.do")
+	public String getOrderEdit(Model model,@RequestParam(name = "orderNo")int orderNo) {
+		OrderVO orderVO=adminDao.getOrder(orderNo);
+		model.addAttribute("order",orderVO);
+		return "admin/order/orderEdit";
+	}
+	
+	@RequestMapping("orderUpdate.do")
+	public String orderUpdate(Model model, OrderVO orderVO) throws Exception {
+		System.out.println(orderVO.toString());
+		adminDao.updateOrder(orderVO);
+		
+		model.addAttribute("url","/admin/orderList.do");
+		model.addAttribute("msg","수정이 완료되었습니다.");
+		return "admin/message";
+	}
+	
+	@RequestMapping("orderDelete.do")
+	@ResponseBody
+	public Boolean orderDelete(@RequestBody OrderVO orderVO) throws Exception {
+		int res = adminDao.deleteOrder(orderVO);
+		Boolean result = false;
+		
+		if(res > 0) {
+			result = true;
+		}
+		
+		return result;
+	}
+	
+	@RequestMapping("selectOrderAction.do")
+	@ResponseBody
+	public Boolean selectOrderAction(@RequestParam(value="Arr[]") String[] Arr) throws Exception {
+
+		Boolean result = true;
+		int size = Arr.length;
+		System.out.println(Arr);
+		System.out.println(Arr[0]);
+		for(int i=0;i<size;i++) {
+			adminDao.selectOrderDelete(Arr[i]);
+		}
+		
+		return result;
+	}
+	
+	//------------------ 주문서관리 end --------------------//
+	
+
+	//------------------ 카테고리관리 start --------------------//
 	
 	@GetMapping("cateList.do")
-	public String cateList() {
+	public String cateList(Model model, @ModelAttribute("paging")PagingVO paging) {
+		
+		int totalRowCount=adminDao.getCateTotalCount(paging);
+		paging.setTotalRowCount(totalRowCount);
+		paging.pageSetting();
+		
+		List<CateVO> cateList=adminDao.getCateList(paging);
+		model.addAttribute("cateList",cateList);		
+
 		return "admin/cate/cateList";
 	}
+
 	
+	@RequestMapping("cateAdd.do")
+	public String getCateAdd(Model model) {
+		return "admin/cate/cateAdd";
+	}
+	
+	@RequestMapping("cateCreate.do")
+	public String cateCreate(Model model, CateVO cateVO) throws Exception {
+		System.out.println(cateVO.toString());
+		adminDao.insertCate(cateVO);
+		
+		model.addAttribute("url","/admin/cateList.do");
+		model.addAttribute("msg","카테고리등록이 완료되었습니다.");
+		return "admin/message";
+	}
+	
+
+
+	@RequestMapping("cateEdit.do")
+	public String getCateEdit(Model model,@RequestParam(name = "cateNo")int cateNo) {
+		CateVO cateVO=adminDao.getCate(cateNo);
+		model.addAttribute("cate",cateVO);
+		return "admin/cate/cateEdit";
+	}
+	
+	@RequestMapping("cateUpdate.do")
+	public String cateUpdate(Model model, CateVO cateVO) throws Exception {
+		System.out.println(cateVO.toString());
+		adminDao.updateCate(cateVO);
+		
+		model.addAttribute("url","/admin/cateList.do");
+		model.addAttribute("msg","수정이 완료되었습니다.");
+		return "admin/message";
+	}
+	
+	@RequestMapping("cateDelete.do")
+	@ResponseBody
+	public Boolean cateDelete(@RequestBody CateVO cateVO) throws Exception {
+		int res = adminDao.deleteCate(cateVO);
+		Boolean result = false;
+		
+		if(res > 0) {
+			result = true;
+		}
+		
+		return result;
+	}
+	
+	@RequestMapping("selectCateAction.do")
+	@ResponseBody
+	public Boolean selectCateAction(@RequestParam(value="Arr[]") String[] Arr) throws Exception {
+
+		Boolean result = true;
+		int size = Arr.length;
+		System.out.println(Arr);
+		System.out.println(Arr[0]);
+		for(int i=0;i<size;i++) {
+			adminDao.selectCateDelete(Arr[i]);
+		}
+		
+		return result;
+	}
+	//------------------ 카테고리관리 end --------------------//
+
+	//------------------ QnA관리 start --------------------//
 	
 	@GetMapping("qnaList.do")
-	public String qnaList() {
+	public String qnaList(Model model, @ModelAttribute("paging")PagingVO paging) {
+		
+		int totalRowCount=adminDao.getQnaTotalCount(paging);
+		paging.setTotalRowCount(totalRowCount);
+		paging.pageSetting();
+		
+		List<QnaVO> qnaList=adminDao.getQnaList(paging);
+		model.addAttribute("qnaList",qnaList);		
+
 		return "admin/qna/qnaList";
 	}
+
+	
+	@RequestMapping("qnaAdd.do")
+	public String getQnaAdd(Model model) {
+		return "admin/qna/qnaAdd";
+	}
+	
+	@RequestMapping("qnaCreate.do")
+	public String qnaCreate(Model model, QnaVO qnaVO) throws Exception {
+		System.out.println(qnaVO.toString());
+		adminDao.insertQna(qnaVO);
+		
+		model.addAttribute("url","/admin/qnaList.do");
+		model.addAttribute("msg","카테고리등록이 완료되었습니다.");
+		return "admin/message";
+	}
+	
+
+
+	@RequestMapping("qnaEdit.do")
+	public String getQnaEdit(Model model,@RequestParam(name = "qnaNo")int qnaNo) {
+		QnaVO qnaVO=adminDao.getQna(qnaNo);
+		model.addAttribute("qna",qnaVO);
+		return "admin/cate/cateEdit";
+	}
+	
+	@RequestMapping("qnaUpdate.do")
+	public String qnaUpdate(Model model, QnaVO qnaVO) throws Exception {
+		System.out.println(qnaVO.toString());
+		adminDao.updateQna(qnaVO);
+		
+		model.addAttribute("url","/admin/qnaList.do");
+		model.addAttribute("msg","수정이 완료되었습니다.");
+		return "admin/message";
+	}
+	
+	@RequestMapping("qnaDelete.do")
+	@ResponseBody
+	public Boolean qnaDelete(@RequestBody QnaVO qnaVO) throws Exception {
+		int res = adminDao.deleteQna(qnaVO);
+		Boolean result = false;
+		
+		if(res > 0) {
+			result = true;
+		}
+		
+		return result;
+	}
+	
+	@RequestMapping("selectQnaAction.do")
+	@ResponseBody
+	public Boolean selectQnaAction(@RequestParam(value="Arr[]") String[] Arr) throws Exception {
+
+		Boolean result = true;
+		int size = Arr.length;
+		System.out.println(Arr);
+		System.out.println(Arr[0]);
+		for(int i=0;i<size;i++) {
+			adminDao.selectQnaDelete(Arr[i]);
+		}
+		
+		return result;
+	}
+	
+
+	//------------------ QnA관리 end --------------------//
 }

@@ -70,8 +70,9 @@
 	</select>	
 	<!-- 회원 end -->
 	
+	
 	<!-- 상품 start -->
-
+	
 	<select id="getItem" parameterType="int" resultType="com.leaf4.app.vo.ItemVO">
 	SELECT * FROM item_list WHERE item_no = #{itemNo}
 	</select>
@@ -87,7 +88,7 @@
 
 
 	<update id="updateItem" parameterType="com.leaf4.app.vo.ItemVO" >
-	UPDATE item_list SET 		item_name        = #{itemName}, 
+	UPDATE item_list SET 	item_name        = #{itemName}, 
 							item_cate        = #{itemCate}, 
 							item_price       = #{itemPrice},
 							item_del         = 'N', 
@@ -123,7 +124,167 @@
 		ORDER BY item_no desc LIMIT #{firstRow},#{rowSizePerPage}
 	</select>	
 
-	
 	<!-- 상품 end -->
+
+
+	<!-- 주문 start -->
+	
+	<select id="getOrder" parameterType="int" resultType="com.leaf4.app.vo.OrderVO">
+	SELECT * FROM order_list WHERE order_no = #{orderNo}
+	</select>
+	
+	
+	<insert id="insertOrder" parameterType="com.leaf4.app.vo.OrderVO" >
+	INSERT INTO order_list SET order_name      = #{orderName}, 
+							   item_cate       = #{itemCate}, 
+							   order_price       = #{orderPrice},
+							   order_del        = 'N', 
+							   wr_datetime       = date_format(now(), '%Y-%m-%d')   
+	</insert>
+
+
+	<update id="updateOrder" parameterType="com.leaf4.app.vo.OrderVO" >
+	UPDATE order_list SET 	order_name        = #{orderName}, 
+							item_cate         = #{itemCate}, 
+							order_price       = #{orderPrice},
+							order_del         = 'N', 
+							up_datetime      = date_format(now(), '%Y-%m-%d') 
+				   WHERE    order_no = #{orderNo}			 
+	</update>
+	
+	<delete id="deleteOrder" parameterType="com.leaf4.app.vo.OrderVO" >
+	DELETE FROM order_list WHERE order_no = #{orderNo}			 
+	</delete>
+	
+	<delete id="selectOrderDelete" parameterType="String" >
+	DELETE FROM order_list WHERE order_no = #{orderNo}			 
+	</delete>
+	
+	<select id="getOrderTotalCount" parameterType="com.leaf4.app.vo.PagingVO" resultType="int">
+		SELECT count(*)
+		FROM order_list
+		WHERE order_del = 'N' 
+		
+		<if test="searchName!=null">
+		and order_name LIKE concat('%',#{searchName},'%')
+		</if>
+	</select>
+
+
+	<select id="getOrderList" parameterType="com.leaf4.app.vo.PagingVO" resultType="com.leaf4.app.vo.OrderVO" >
+		SELECT * FROM order_list
+		WHERE order_del = 'N'
+		<if test="searchName!=null">
+		and order_name LIKE concat('%',#{searchName},'%')
+		</if>
+		ORDER BY order_no desc LIMIT #{firstRow},#{rowSizePerPage}
+	</select>	
+	
+
+	<!-- 주문 end -->
+	
+	<!-- 카테고리 start -->
+	<select id="getCate" parameterType="int" resultType="com.leaf4.app.vo.CateVO">
+	SELECT * FROM cate_list WHERE cate_no = #{cateNo}
+	</select>
+	
+	
+	<insert id="insertCate" parameterType="com.leaf4.app.vo.CateVO" >
+	INSERT INTO cate_list SET cate_name      = #{cateName}, 
+							  cate_order     = #{cateOrder},
+							  cate_del      = 'N', 
+							  wr_datetime    = date_format(now(), '%Y-%m-%d')   
+	</insert>
+
+
+	<update id="updateCate" parameterType="com.leaf4.app.vo.CateVO" >
+	UPDATE cate_list SET 	cate_name        = #{cateName}, 
+							cate_order       = #{cateOrder}, 
+							cate_del         = 'N', 
+							up_datetime      = date_format(now(), '%Y-%m-%d') 
+				   WHERE    cate_no = #{cateNo}			 
+	</update>
+	
+	<delete id="deleteCate" parameterType="com.leaf4.app.vo.CateVO" >
+	DELETE FROM cate_list WHERE cate_no = #{cateNo}			 
+	</delete>
+	
+	<delete id="selectCateDelete" parameterType="String" >
+	DELETE FROM cate_list WHERE cate_no = #{cateNo}			 
+	</delete>
+	
+	<select id="getCateTotalCount" parameterType="com.leaf4.app.vo.PagingVO" resultType="int">
+		SELECT count(*)
+		FROM cate_list
+		WHERE cate_del = 'N' 
+		
+		<if test="searchName!=null">
+		and cate_name LIKE concat('%',#{searchName},'%')
+		</if>
+	</select>
+
+
+	<select id="getCateList" parameterType="com.leaf4.app.vo.PagingVO" resultType="com.leaf4.app.vo.CateVO" >
+		SELECT * FROM cate_list
+		WHERE cate_del = 'N'
+		<if test="searchName!=null">
+		and cate_name LIKE concat('%',#{searchName},'%')
+		</if>
+		ORDER BY cate_no desc LIMIT #{firstRow},#{rowSizePerPage}
+	</select>	
+
+	<!-- 카테고리 end -->
+
+	<!-- Qna start -->
+	<select id="getQna" parameterType="int" resultType="com.leaf4.app.vo.QnaVO">
+	SELECT * FROM qna_list WHERE qna_no = #{qnaNo}
+	</select>
+	
+	
+	<insert id="insertQna" parameterType="com.leaf4.app.vo.QnaVO" >
+	INSERT INTO qna_list SET subject      = #{subject}, 
+							 content     = #{content},
+							 qna_del      = 'N', 
+							 wr_datetime    = date_format(now(), '%Y-%m-%d')   
+	</insert>
+
+
+	<update id="updateQna" parameterType="com.leaf4.app.vo.QnaVO" >
+	UPDATE qna_list SET 	subject       = #{subject}, 
+							content       = #{content}, 
+							qna_del      = 'N', 
+							up_datetime   = date_format(now(), '%Y-%m-%d') 
+				   WHERE    qna_no = #{qnaNo}			 
+	</update>
+	
+	<delete id="deleteQna" parameterType="com.leaf4.app.vo.QnaVO" >
+	DELETE FROM qna_list WHERE qna_no = #{qnaNo}			 
+	</delete>
+	
+	<delete id="selectQnaDelete" parameterType="String" >
+	DELETE FROM qna_list WHERE qna_no = #{qnaNo}			 
+	</delete>
+	
+	<select id="getQnaTotalCount" parameterType="com.leaf4.app.vo.PagingVO" resultType="int">
+		SELECT count(*)
+		FROM qna_list
+		WHERE qna_del = 'N' 
+		
+		<if test="searchName!=null">
+		and subject LIKE concat('%',#{searchName},'%')
+		</if>
+	</select>
+
+
+	<select id="getQnaList" parameterType="com.leaf4.app.vo.PagingVO" resultType="com.leaf4.app.vo.QnaVO" >
+		SELECT * FROM qna_list
+		WHERE qna_del = 'N'
+		<if test="searchName!=null">
+		and subject LIKE concat('%',#{searchName},'%')
+		</if>
+		ORDER BY qna_no desc LIMIT #{firstRow},#{rowSizePerPage}
+	</select>	
+
+	<!-- Qna end -->
 
 </mapper>
